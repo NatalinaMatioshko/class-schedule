@@ -205,11 +205,6 @@ function readFromDom() {
   });
 }
 
-const LESSON_HIGHLIGHTS = [
-  { className: "lesson-red", re: /E[aа]rly Years\. Cambridge(?:\s*\(\s*супровід\s*\))?/gi },
-  { className: "lesson-red-alt", re: /Англійська мова 16\.05/gi },
-];
-
 function escapeHtml(text) {
   return String(text)
     .replace(/&/g, "&amp;")
@@ -219,27 +214,38 @@ function escapeHtml(text) {
 
 function formatLessons(text) {
   const src = text || "";
-  const marks = [];
-  for (const highlight of LESSON_HIGHLIGHTS) {
-    highlight.re.lastIndex = 0;
+  const rules = [
+    { re: /E[aа]rly Years\. Cambridge(?:\s*\(\s*супровід\s*\))?/gi, className: "lesson-red" },
+    { re: /Англ(?:ійська|\.)?\s*мова/gi, className: "lesson-red-en" },
+  ];
+  const hits = [];
+  for (const rule of rules) {
+    rule.re.lastIndex = 0;
     let match;
-    while ((match = highlight.re.exec(src))) {
-      marks.push({
+    while ((match = rule.re.exec(src))) {
+      hits.push({
         start: match.index,
         end: match.index + match[0].length,
-        className: highlight.className,
+        className: rule.className,
       });
     }
   }
-  marks.sort((a, b) => a.start - b.start || b.end - a.end);
+  hits.sort((a, b) => a.start - b.start || b.end - a.end);
+
+  const picked = [];
+  let cursor = 0;
+  for (const hit of hits) {
+    if (hit.start < cursor) continue;
+    picked.push(hit);
+    cursor = hit.end;
+  }
 
   let html = "";
   let last = 0;
-  for (const mark of marks) {
-    if (mark.start < last) continue;
-    html += escapeHtml(src.slice(last, mark.start)).replace(/\n/g, "<br>");
-    html += `<span class="${mark.className}">${escapeHtml(src.slice(mark.start, mark.end))}</span>`;
-    last = mark.end;
+  for (const hit of picked) {
+    html += escapeHtml(src.slice(last, hit.start)).replace(/\n/g, "<br>");
+    html += `<span class="${hit.className}">${escapeHtml(src.slice(hit.start, hit.end))}</span>`;
+    last = hit.end;
   }
   html += escapeHtml(src.slice(last)).replace(/\n/g, "<br>");
   return html;
