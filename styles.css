@@ -290,7 +290,7 @@ body {
 }
 
 .lesson-red-en {
-  color: #9b1b30;
+  color: #e91e63;
   font-weight: 800;
 }
 
@@ -306,6 +306,14 @@ body {
   white-space: pre-wrap;
   word-break: break-word;
   overflow: hidden;
+}
+
+.lessons .lesson-red {
+  color: #e7423b;
+}
+
+.lessons .lesson-red-en {
+  color: #e91e63;
 }
 
 .group-name span:hover,

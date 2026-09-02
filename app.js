@@ -216,7 +216,7 @@ function formatLessons(text) {
   const src = text || "";
   const rules = [
     { re: /E[aа]rly Years\. Cambridge(?:\s*\(\s*супровід\s*\))?/gi, className: "lesson-red" },
-    { re: /Англ(?:ійська|\.)?\s*мова/gi, className: "lesson-red-en" },
+    { re: /Англійська мова|Англ\.\s*мова/gi, className: "lesson-red-en" },
   ];
   const hits = [];
   for (const rule of rules) {
@@ -264,6 +264,9 @@ function applyState() {
       paintLessons(morning, group.days[DAYS[dayIndex]].morning);
       paintLessons(afternoon, group.days[DAYS[dayIndex]].afternoon);
     });
+  });
+  document.querySelectorAll(".lessons").forEach((el) => {
+    paintLessons(el, el.innerText.replace(/\n+$/, ""));
   });
 }
 
