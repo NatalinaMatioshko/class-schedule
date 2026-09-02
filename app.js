@@ -1,6 +1,108 @@
 const DAYS = ["mon", "tue", "wed", "thu", "fri"];
-const DEFAULT_GROUPS = ["Винахідники", "Дослідники", "Пізнайки", "Я самчики"];
-const STORAGE_KEY = "umka-class-schedule-v1";
+const STORAGE_KEY = "umka-class-schedule-v2";
+
+const INITIAL_GROUPS = [
+  {
+    name: "Винахідники",
+    days: {
+      mon: {
+        morning: "Математика 9.15 / Англійська мова\nЖивопис 10.30 (I підгрупа)\nХореографія 11.00\nЖивопис 11.30 (II підгрупа)",
+        afternoon: "Early Years. Cambridge (супровід)\nNature",
+      },
+      tue: {
+        morning: "Музика 9.15-9.45\nГрамота 9.50 / Англійська мова\nФізкультура 11.00-11.25",
+        afternoon: "Пізнаю світ / Розвиток мови",
+      },
+      wed: {
+        morning: "Early Years. Cambridge (супровід)\nМатематика 9.15 / Англійська мова\nЖивопис 10.50-12.00 (по групах)",
+        afternoon: "Підготовка руки до письма 16.15",
+      },
+      thu: {
+        morning: "Early Years. Cambridge (супровід)\nГрамота 9.15 / Англійська мова\nМузика 10.25\nХореографія 11.00-11.25",
+        afternoon: "СХД",
+      },
+      fri: {
+        morning: "Англійська мова / Математика 9.15\nФізкультура 10.50-11.20",
+        afternoon: "ЯПС 15.15-15.45",
+      },
+    },
+  },
+  {
+    name: "Дослідники",
+    days: {
+      mon: {
+        morning: "Математика 9.15-10.00\nЖивопис 10.10\nАнгл. мова 10.45\nХореографія 12.00",
+        afternoon: "",
+      },
+      tue: {
+        morning: "Грамота. Читання 9.15-9.45\nМузика 10.30-11.00\nФізкультура 12.00-12.25",
+        afternoon: "Пізнаю світ / Розвиток мови 15.45-16.15",
+      },
+      wed: {
+        morning: "Математика 9.15-9.50\nЖивопис 10.15-11.00",
+        afternoon: "Англійська мова 15.15\nСХД",
+      },
+      thu: {
+        morning: "Грамота 9.15\nАнглійська мова 10.00\nМузика 11.00\nХореографія 12.00-12.25",
+        afternoon: "Підготовка руки до письма",
+      },
+      fri: {
+        morning: "Математика 9.15\nФізкультура 10.10-10.40\nАнглійська мова 11.00",
+        afternoon: "Early Years. Cambridge\nЯПС",
+      },
+    },
+  },
+  {
+    name: "Пізнайки",
+    days: {
+      mon: {
+        morning: "Математика 9.15-9.40\nЖивопис 9.45\nАнгл. мова 10.20\nХореографія 11.25-11.45",
+        afternoon: "ЯПС",
+      },
+      tue: {
+        morning: "Грамота 9.20-9.40\nМузика 10.10-10.30\nФізкультура 11.45-12.05",
+        afternoon: "Early Years. Cambridge / Nature\nЯПС / Розвиток мовлення 15.20",
+      },
+      wed: {
+        morning: "Математика 9.15\nЖивопис 9.50-10.10",
+        afternoon: "СХД-пластилінографія\nАнглійська мова 16.05",
+      },
+      thu: {
+        morning: "Грамота 9.20\nМузика 9.45\nАнглійська мова 10.25\nХореографія 11.45-12.05",
+        afternoon: "СХД 16.15",
+      },
+      fri: {
+        morning: "Англійська мова 9.20\nФізкультура 9.45-10.05\nМатематика 10.10-10.30",
+        afternoon: "Пізнаю світ 15.30-16.00",
+      },
+    },
+  },
+  {
+    name: "Я самчики",
+    days: {
+      mon: {
+        morning: "Живопис 9.20\nАнглійська мова 10.00\nСенсорика 10.20\nХореографія 11.45-12.00",
+        afternoon: "ЯПС",
+      },
+      tue: {
+        morning: "Грамота 9.20-9.40\nМузика 9.45-10.10\nЖивопис 10.10-10.30\nФізкультура 11.30-11.45",
+        afternoon: "ЯПС / Розвиток мовлення 15.30",
+      },
+      wed: {
+        morning: "Живопис 9.20-9.40\nСенсорний розвиток 9.45-10.05",
+        afternoon: "СХД-пластилінографія\nАнглійська мова 15.45",
+      },
+      thu: {
+        morning: "Музика 9.20-9.45\nГрамота 10.20\nХореографія 11.30-11.45",
+        afternoon: "Early Years. Cambridge\nСХД",
+      },
+      fri: {
+        morning: "Фізкультура 9.20-9.40\nАнглійська мова 9.45\nМатематика 10.00-10.15",
+        afternoon: "Пізнаю світ 15.30-16.00",
+      },
+    },
+  },
+];
 
 function emptyDays() {
   const days = {};
@@ -12,11 +114,23 @@ function emptyDays() {
 
 function defaultState() {
   return {
-    groups: DEFAULT_GROUPS.map((name) => ({
-      name,
-      days: emptyDays(),
+    groups: INITIAL_GROUPS.map((group) => ({
+      name: group.name,
+      days: {
+        mon: { ...group.days.mon },
+        tue: { ...group.days.tue },
+        wed: { ...group.days.wed },
+        thu: { ...group.days.thu },
+        fri: { ...group.days.fri },
+      },
     })),
   };
+}
+
+function isEmptyState(data) {
+  return data.groups.every((group) =>
+    DAYS.every((id) => !group.days[id].morning.trim() && !group.days[id].afternoon.trim())
+  );
 }
 
 function mergeState(parsed) {
@@ -60,11 +174,13 @@ function stateFromHash() {
 
 function loadState() {
   const fromLink = stateFromHash();
-  if (fromLink) return fromLink;
+  if (fromLink && !isEmptyState(fromLink)) return fromLink;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return defaultState();
-    return mergeState(JSON.parse(raw));
+    const parsed = mergeState(JSON.parse(raw));
+    if (isEmptyState(parsed)) return defaultState();
+    return parsed;
   } catch {
     return defaultState();
   }

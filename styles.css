@@ -287,14 +287,15 @@ body {
 .lessons {
   flex: 1;
   min-height: 10mm;
-  padding: 3px 5px;
-  font-size: 10px;
-  line-height: 1.25;
+  padding: 2px 4px;
+  font-size: 9px;
+  line-height: 1.22;
   font-weight: 600;
   color: var(--ink);
   outline: none;
   white-space: pre-wrap;
   word-break: break-word;
+  overflow: hidden;
 }
 
 .group-name span:hover,
