@@ -289,6 +289,11 @@ body {
   font-weight: 800;
 }
 
+.lesson-red-alt {
+  color: #9b1b30;
+  font-weight: 800;
+}
+
 .lessons {
   flex: 1;
   min-height: 10mm;

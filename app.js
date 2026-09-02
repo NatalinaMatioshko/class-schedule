@@ -205,6 +205,11 @@ function readFromDom() {
   });
 }
 
+const LESSON_HIGHLIGHTS = [
+  { className: "lesson-red", re: /E[aа]rly Years\. Cambridge(?:\s*\(\s*супровід\s*\))?/gi },
+  { className: "lesson-red-alt", re: /Англійська мова 16\.05/gi },
+];
+
 function escapeHtml(text) {
   return String(text)
     .replace(/&/g, "&amp;")
@@ -214,14 +219,27 @@ function escapeHtml(text) {
 
 function formatLessons(text) {
   const src = text || "";
-  const re = /E[aа]rly Years\. Cambridge(?:\s*\(\s*супровід\s*\))?/gi;
+  const marks = [];
+  for (const highlight of LESSON_HIGHLIGHTS) {
+    highlight.re.lastIndex = 0;
+    let match;
+    while ((match = highlight.re.exec(src))) {
+      marks.push({
+        start: match.index,
+        end: match.index + match[0].length,
+        className: highlight.className,
+      });
+    }
+  }
+  marks.sort((a, b) => a.start - b.start || b.end - a.end);
+
   let html = "";
   let last = 0;
-  let match;
-  while ((match = re.exec(src))) {
-    html += escapeHtml(src.slice(last, match.index)).replace(/\n/g, "<br>");
-    html += `<span class="lesson-red">${escapeHtml(match[0])}</span>`;
-    last = match.index + match[0].length;
+  for (const mark of marks) {
+    if (mark.start < last) continue;
+    html += escapeHtml(src.slice(last, mark.start)).replace(/\n/g, "<br>");
+    html += `<span class="${mark.className}">${escapeHtml(src.slice(mark.start, mark.end))}</span>`;
+    last = mark.end;
   }
   html += escapeHtml(src.slice(last)).replace(/\n/g, "<br>");
   return html;
