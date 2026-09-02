@@ -63,36 +63,44 @@ body {
   color: #4a4a4a;
 }
 
-.toolbar button,
-.toolbar a.ghost {
+.toolbar-btn,
+.toolbar-btn:link,
+.toolbar-btn:visited {
   appearance: none;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
   border: 0;
   border-radius: 999px;
   padding: 10px 18px;
   background: var(--navy);
   color: #fff;
-  font: inherit;
+  font-family: inherit;
+  font-size: 14px;
   font-weight: 700;
-  cursor: pointer;
+  line-height: 1.2;
   text-decoration: none;
-  display: inline-flex;
-  align-items: center;
+  cursor: pointer;
 }
 
-.toolbar button:hover {
+.toolbar-btn:hover {
   background: #163a7a;
+  color: #fff;
 }
 
-.toolbar button.ghost,
-.toolbar a.ghost {
+.toolbar-btn.ghost,
+.toolbar-btn.ghost:link,
+.toolbar-btn.ghost:visited {
   background: #fff;
   color: var(--navy);
   border: 1px solid #d0d0d0;
 }
 
-.toolbar button.ghost:hover,
-.toolbar a.ghost:hover {
+.toolbar-btn.ghost:hover {
   background: #f4f7fb;
+  color: var(--navy);
 }
 
 .stage {
