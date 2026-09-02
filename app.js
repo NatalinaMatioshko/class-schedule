@@ -78,7 +78,7 @@ const INITIAL_GROUPS = [
     },
   },
   {
-    name: "Я самчики",
+    name: "Я самики",
     days: {
       mon: {
         morning: "Живопис 9.20\nАнглійська мова 10.00\nСенсорика 10.20\nХореографія 11.45-12.00",
@@ -146,8 +146,9 @@ function mergeState(parsed) {
           afternoon: incoming.days?.[id]?.afternoon ?? "",
         };
       }
+      const name = incoming.name ?? group.name;
       return {
-        name: incoming.name ?? group.name,
+        name: /^Я сам(ч)?ики$/i.test(name.trim()) ? "Я самики" : name,
         days,
       };
     }),
