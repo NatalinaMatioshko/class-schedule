@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Розклад занять 2026–2027 — Гімназія «Умка Смарт»</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="toolbar no-print">
+      <p>Гімназія «Умка Смарт» · розклад на 2026–2027 н.р.</p>
+      <div class="toolbar-actions">
+        <button type="button" class="ghost" id="share-btn">Скопіювати посилання</button>
+        <button type="button" id="print-btn">Друкувати</button>
+      </div>
+      <span id="share-hint" class="toolbar-hint" hidden></span>
+    </div>
+
+    <div class="stage">
+      <main class="sheet" aria-label="Розклад занять">
+        <header class="sheet-header">
+          <div class="logo-space" aria-hidden="true"></div>
+          <div class="approval">
+            <p class="approval-title">Затверджую</p>
+            <p>Директор «Гімназії «Умка Смарт»</p>
+            <p>села Софіївська Борщагівка</p>
+            <p class="approval-sign">
+              <span class="sign-line" aria-hidden="true"></span>
+              Курінна В.В.
+            </p>
+          </div>
+        </header>
+
+        <section class="title-block">
+          <h1>Розклад занять</h1>
+          <p class="year">на 2026–2027 навчальний рік</p>
+        </section>
+
+        <table class="schedule">
+          <thead>
+            <tr>
+              <th class="stub">Група</th>
+              <th class="day day-mon">Понеділок</th>
+              <th class="day day-tue">Вівторок</th>
+              <th class="day day-wed">Середа</th>
+              <th class="day day-thu">Четвер</th>
+              <th class="day day-fri">П’ятниця</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="group-row">
+              <th class="group-name">
+                <span
+                  contenteditable="true"
+                  role="textbox"
+                  aria-label="Назва групи"
+                  data-placeholder="Назва групи"
+                >Винахідники</span>
+              </th>
+              <td>
+                <div class="day-cell">
+                  <p class="half-label morning">І-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Винахідники, понеділок, І половина дня"></div>
+                  <p class="half-label afternoon">ІІ-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Винахідники, понеділок, ІІ половина дня"></div>
+                </div>
+              </td>
+              <td>
+                <div class="day-cell">
+                  <p class="half-label morning">І-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Винахідники, вівторок, І половина дня"></div>
+                  <p class="half-label afternoon">ІІ-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Винахідники, вівторок, ІІ половина дня"></div>
+                </div>
+              </td>
+              <td>
+                <div class="day-cell">
+                  <p class="half-label morning">І-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Винахідники, середа, І половина дня"></div>
+                  <p class="half-label afternoon">ІІ-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Винахідники, середа, ІІ половина дня"></div>
+                </div>
+              </td>
+              <td>
+                <div class="day-cell">
+                  <p class="half-label morning">І-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Винахідники, четвер, І половина дня"></div>
+                  <p class="half-label afternoon">ІІ-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Винахідники, четвер, ІІ половина дня"></div>
+                </div>
+              </td>
+              <td>
+                <div class="day-cell">
+                  <p class="half-label morning">І-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Винахідники, п’ятниця, І половина дня"></div>
+                  <p class="half-label afternoon">ІІ-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Винахідники, п’ятниця, ІІ половина дня"></div>
+                </div>
+              </td>
+            </tr>
+
+            <tr class="group-row">
+              <th class="group-name">
+                <span
+                  contenteditable="true"
+                  role="textbox"
+                  aria-label="Назва групи"
+                  data-placeholder="Назва групи"
+                >Дослідники</span>
+              </th>
+              <td>
+                <div class="day-cell">
+                  <p class="half-label morning">І-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Дослідники, понеділок, І половина дня"></div>
+                  <p class="half-label afternoon">ІІ-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Дослідники, понеділок, ІІ половина дня"></div>
+                </div>
+              </td>
+              <td>
+                <div class="day-cell">
+                  <p class="half-label morning">І-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Дослідники, вівторок, І половина дня"></div>
+                  <p class="half-label afternoon">ІІ-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Дослідники, вівторок, ІІ половина дня"></div>
+                </div>
+              </td>
+              <td>
+                <div class="day-cell">
+                  <p class="half-label morning">І-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Дослідники, середа, І половина дня"></div>
+                  <p class="half-label afternoon">ІІ-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Дослідники, середа, ІІ половина дня"></div>
+                </div>
+              </td>
+              <td>
+                <div class="day-cell">
+                  <p class="half-label morning">І-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Дослідники, четвер, І половина дня"></div>
+                  <p class="half-label afternoon">ІІ-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Дослідники, четвер, ІІ половина дня"></div>
+                </div>
+              </td>
+              <td>
+                <div class="day-cell">
+                  <p class="half-label morning">І-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Дослідники, п’ятниця, І половина дня"></div>
+                  <p class="half-label afternoon">ІІ-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Дослідники, п’ятниця, ІІ половина дня"></div>
+                </div>
+              </td>
+            </tr>
+
+            <tr class="group-row">
+              <th class="group-name">
+                <span
+                  contenteditable="true"
+                  role="textbox"
+                  aria-label="Назва групи"
+                  data-placeholder="Назва групи"
+                >Пізнайки</span>
+              </th>
+              <td>
+                <div class="day-cell">
+                  <p class="half-label morning">І-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Пізнайки, понеділок, І половина дня"></div>
+                  <p class="half-label afternoon">ІІ-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Пізнайки, понеділок, ІІ половина дня"></div>
+                </div>
+              </td>
+              <td>
+                <div class="day-cell">
+                  <p class="half-label morning">І-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Пізнайки, вівторок, І половина дня"></div>
+                  <p class="half-label afternoon">ІІ-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Пізнайки, вівторок, ІІ половина дня"></div>
+                </div>
+              </td>
+              <td>
+                <div class="day-cell">
+                  <p class="half-label morning">І-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Пізнайки, середа, І половина дня"></div>
+                  <p class="half-label afternoon">ІІ-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Пізнайки, середа, ІІ половина дня"></div>
+                </div>
+              </td>
+              <td>
+                <div class="day-cell">
+                  <p class="half-label morning">І-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Пізнайки, четвер, І половина дня"></div>
+                  <p class="half-label afternoon">ІІ-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Пізнайки, четвер, ІІ половина дня"></div>
+                </div>
+              </td>
+              <td>
+                <div class="day-cell">
+                  <p class="half-label morning">І-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Пізнайки, п’ятниця, І половина дня"></div>
+                  <p class="half-label afternoon">ІІ-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Пізнайки, п’ятниця, ІІ половина дня"></div>
+                </div>
+              </td>
+            </tr>
+
+            <tr class="group-row">
+              <th class="group-name">
+                <span
+                  contenteditable="true"
+                  role="textbox"
+                  aria-label="Назва групи"
+                  data-placeholder="Назва групи"
+                >Я самчики</span>
+              </th>
+              <td>
+                <div class="day-cell">
+                  <p class="half-label morning">І-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Я самчики, понеділок, І половина дня"></div>
+                  <p class="half-label afternoon">ІІ-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Я самчики, понеділок, ІІ половина дня"></div>
+                </div>
+              </td>
+              <td>
+                <div class="day-cell">
+                  <p class="half-label morning">І-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Я самчики, вівторок, І половина дня"></div>
+                  <p class="half-label afternoon">ІІ-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Я самчики, вівторок, ІІ половина дня"></div>
+                </div>
+              </td>
+              <td>
+                <div class="day-cell">
+                  <p class="half-label morning">І-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Я самчики, середа, І половина дня"></div>
+                  <p class="half-label afternoon">ІІ-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Я самчики, середа, ІІ половина дня"></div>
+                </div>
+              </td>
+              <td>
+                <div class="day-cell">
+                  <p class="half-label morning">І-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Я самчики, четвер, І половина дня"></div>
+                  <p class="half-label afternoon">ІІ-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Я самчики, четвер, ІІ половина дня"></div>
+                </div>
+              </td>
+              <td>
+                <div class="day-cell">
+                  <p class="half-label morning">І-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Я самчики, п’ятниця, І половина дня"></div>
+                  <p class="half-label afternoon">ІІ-пол. дня</p>
+                  <div class="lessons" contenteditable="true" role="textbox" aria-label="Я самчики, п’ятниця, ІІ половина дня"></div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p class="hint no-print">Натисніть на клітинку, щоб вписати заняття. Скопіюйте посилання, щоб відкрити той самий розклад на іншому комп’ютері.</p>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
