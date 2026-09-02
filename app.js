@@ -205,14 +205,40 @@ function readFromDom() {
   });
 }
 
+function escapeHtml(text) {
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function formatLessons(text) {
+  const src = text || "";
+  const re = /E[aа]rly Years\. Cambridge(?:\s*\(\s*супровід\s*\))?/gi;
+  let html = "";
+  let last = 0;
+  let match;
+  while ((match = re.exec(src))) {
+    html += escapeHtml(src.slice(last, match.index)).replace(/\n/g, "<br>");
+    html += `<span class="lesson-red">${escapeHtml(match[0])}</span>`;
+    last = match.index + match[0].length;
+  }
+  html += escapeHtml(src.slice(last)).replace(/\n/g, "<br>");
+  return html;
+}
+
+function paintLessons(el, text) {
+  el.innerHTML = formatLessons(text);
+}
+
 function applyState() {
   groupRows().forEach((row, groupIndex) => {
     const group = state.groups[groupIndex];
     row.querySelector(".group-name span").textContent = group.name;
     row.querySelectorAll("td").forEach((cell, dayIndex) => {
       const [morning, afternoon] = cell.querySelectorAll(".lessons");
-      morning.textContent = group.days[DAYS[dayIndex]].morning;
-      afternoon.textContent = group.days[DAYS[dayIndex]].afternoon;
+      paintLessons(morning, group.days[DAYS[dayIndex]].morning);
+      paintLessons(afternoon, group.days[DAYS[dayIndex]].afternoon);
     });
   });
 }
@@ -228,6 +254,14 @@ function bind() {
   sheet.addEventListener("input", () => {
     readFromDom();
     saveState();
+  });
+
+  sheet.addEventListener("focusout", (event) => {
+    const el = event.target.closest(".lessons");
+    if (!el || el.contains(event.relatedTarget)) return;
+    readFromDom();
+    saveState();
+    paintLessons(el, el.innerText.replace(/\n+$/, ""));
   });
 
   document.getElementById("print-btn").addEventListener("click", () => window.print());
