@@ -276,10 +276,32 @@ function saveState() {
   history.replaceState(null, "", next);
 }
 
+function scaleSheetToScreen() {
+  if (window.matchMedia("print").matches) return;
+  const wrap = document.querySelector(".sheet-wrap");
+  const sheet = document.querySelector(".sheet");
+  if (!wrap || !sheet) return;
+  sheet.style.transform = "none";
+  const naturalW = sheet.offsetWidth;
+  const naturalH = sheet.offsetHeight;
+  const available = Math.max(document.documentElement.clientWidth - 32, 160);
+  const scale = Math.min(1, available / naturalW);
+  sheet.style.transformOrigin = "top left";
+  sheet.style.transform = scale < 0.999 ? `scale(${scale})` : "none";
+  wrap.style.width = `${naturalW * scale}px`;
+  wrap.style.height = `${naturalH * scale}px`;
+}
+
 function fitSheetForPrint() {
   const sheet = document.querySelector(".sheet");
+  const wrap = document.querySelector(".sheet-wrap");
   const content = document.querySelector(".sheet-content");
   if (!sheet || !content) return;
+  sheet.style.transform = "none";
+  if (wrap) {
+    wrap.style.width = "";
+    wrap.style.height = "";
+  }
   content.style.transform = "none";
   const available = sheet.clientHeight;
   const needed = content.scrollHeight;
@@ -290,8 +312,8 @@ function fitSheetForPrint() {
 
 function clearPrintFit() {
   const content = document.querySelector(".sheet-content");
-  if (!content) return;
-  content.style.transform = "none";
+  if (content) content.style.transform = "none";
+  scaleSheetToScreen();
 }
 
 function bind() {
@@ -299,6 +321,7 @@ function bind() {
   sheet.addEventListener("input", () => {
     readFromDom();
     saveState();
+    scaleSheetToScreen();
   });
 
   sheet.addEventListener("focusout", (event) => {
@@ -313,6 +336,8 @@ function bind() {
 
   window.addEventListener("beforeprint", fitSheetForPrint);
   window.addEventListener("afterprint", clearPrintFit);
+
+  window.addEventListener("resize", scaleSheetToScreen);
 
   document.getElementById("share-btn").addEventListener("click", async () => {
     readFromDom();
@@ -337,10 +362,15 @@ function bind() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     applyState();
   });
+
+  if (window.ResizeObserver) {
+    new ResizeObserver(scaleSheetToScreen).observe(sheet);
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   applyState();
   bind();
   saveState();
+  scaleSheetToScreen();
 });
