@@ -276,6 +276,24 @@ function saveState() {
   history.replaceState(null, "", next);
 }
 
+function fitSheetForPrint() {
+  const sheet = document.querySelector(".sheet");
+  const content = document.querySelector(".sheet-content");
+  if (!sheet || !content) return;
+  content.style.transform = "none";
+  const available = sheet.clientHeight;
+  const needed = content.scrollHeight;
+  const scale = Math.min(1, available / Math.max(needed, 1));
+  content.style.transformOrigin = "top center";
+  content.style.transform = scale < 0.995 ? `scale(${scale})` : "none";
+}
+
+function clearPrintFit() {
+  const content = document.querySelector(".sheet-content");
+  if (!content) return;
+  content.style.transform = "none";
+}
+
 function bind() {
   const sheet = document.querySelector(".sheet");
   sheet.addEventListener("input", () => {
@@ -292,6 +310,9 @@ function bind() {
   });
 
   document.getElementById("print-btn").addEventListener("click", () => window.print());
+
+  window.addEventListener("beforeprint", fitSheetForPrint);
+  window.addEventListener("afterprint", clearPrintFit);
 
   document.getElementById("share-btn").addEventListener("click", async () => {
     readFromDom();
