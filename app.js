@@ -1,5 +1,8 @@
 const DAYS = ["mon", "tue", "wed", "thu", "fri"];
-const STORAGE_KEY = "umka-class-schedule-v2";
+const STORAGE_KEY = "umka-class-schedule-v3";
+const PREV_STORAGE_KEY = "umka-class-schedule-v2";
+const MIN_FONT_PX = 6;
+const MAX_FONT_PX = 22;
 
 const INITIAL_GROUPS = [
   {
@@ -127,9 +130,25 @@ function defaultState() {
   };
 }
 
+function htmlToText(value) {
+  if (!value) return "";
+  if (!/[<>]/.test(value)) return String(value);
+  const box = document.createElement("div");
+  box.innerHTML = value;
+  return box.innerText.replace(/\n+$/, "");
+}
+
+function looksLikeHtml(value) {
+  return /<\/?[a-z]|style\s*=/i.test(value || "");
+}
+
 function isEmptyState(data) {
   return data.groups.every((group) =>
-    DAYS.every((id) => !group.days[id].morning.trim() && !group.days[id].afternoon.trim())
+    DAYS.every(
+      (id) =>
+        !htmlToText(group.days[id].morning).trim() &&
+        !htmlToText(group.days[id].afternoon).trim()
+    )
   );
 }
 
@@ -147,8 +166,9 @@ function mergeState(parsed) {
         };
       }
       const name = incoming.name ?? group.name;
+      const nameText = htmlToText(name).trim();
       return {
-        name: /^Я сам(ч)?ики$/i.test(name.trim()) ? "Я самики" : name,
+        name: /^Я сам(ч)?ики$/i.test(nameText) ? "Я самики" : name,
         days,
       };
     }),
@@ -177,7 +197,7 @@ function loadState() {
   const fromLink = stateFromHash();
   if (fromLink && !isEmptyState(fromLink)) return fromLink;
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(PREV_STORAGE_KEY);
     if (!raw) return defaultState();
     const parsed = mergeState(JSON.parse(raw));
     if (isEmptyState(parsed)) return defaultState();
@@ -193,14 +213,76 @@ function groupRows() {
   return [...document.querySelectorAll(".group-row")];
 }
 
+const STYLE_PROPS = ["color", "font-family", "font-size", "font-weight", "font-style", "text-decoration"];
+const ALLOWED_TAGS = new Set(["SPAN", "FONT", "BR", "B", "STRONG", "I", "EM", "U", "DIV", "P"]);
+
+function sanitizeStyle(styleText) {
+  const dummy = document.createElement("span");
+  dummy.setAttribute("style", styleText || "");
+  return STYLE_PROPS.map((prop) => {
+    const value = dummy.style.getPropertyValue(prop);
+    return value ? `${prop}: ${value}` : "";
+  })
+    .filter(Boolean)
+    .join("; ");
+}
+
+function sanitizeHtml(html) {
+  const template = document.createElement("template");
+  template.innerHTML = html || "";
+
+  const clean = (node) => {
+    [...node.childNodes].forEach((child) => {
+      if (child.nodeType === Node.COMMENT_NODE) {
+        child.remove();
+        return;
+      }
+      if (child.nodeType !== Node.ELEMENT_NODE) return;
+      if (!ALLOWED_TAGS.has(child.tagName)) {
+        const fragment = document.createDocumentFragment();
+        while (child.firstChild) fragment.appendChild(child.firstChild);
+        child.replaceWith(fragment);
+        clean(node);
+        return;
+      }
+      [...child.attributes].forEach((attr) => {
+        const name = attr.name.toLowerCase();
+        if (name === "style") {
+          const next = sanitizeStyle(attr.value);
+          if (next) child.setAttribute("style", next);
+          else child.removeAttribute("style");
+        } else if (name === "class" && /^(lesson-red|lesson-red-en)$/.test(attr.value.trim())) {
+          child.setAttribute("class", attr.value.trim());
+        } else if (name === "color" && child.tagName === "FONT") {
+          child.setAttribute("color", attr.value);
+        } else if (name === "face" && child.tagName === "FONT") {
+          child.setAttribute("face", attr.value);
+        } else {
+          child.removeAttribute(attr.name);
+        }
+      });
+      clean(child);
+    });
+  };
+
+  clean(template.content);
+  return template.innerHTML;
+}
+
+function compactCellHtml(el) {
+  const html = sanitizeHtml(el.innerHTML).replace(/\s+$/, "");
+  if (!looksLikeHtml(html)) return htmlToText(html);
+  return html;
+}
+
 function readFromDom() {
   groupRows().forEach((row, groupIndex) => {
     const group = state.groups[groupIndex];
-    group.name = row.querySelector(".group-name span").innerText.replace(/\n/g, " ").trim();
+    group.name = compactCellHtml(row.querySelector(".group-name span"));
     row.querySelectorAll("td").forEach((cell, dayIndex) => {
       const [morning, afternoon] = cell.querySelectorAll(".lessons");
-      group.days[DAYS[dayIndex]].morning = morning.innerText.replace(/\n+$/, "");
-      group.days[DAYS[dayIndex]].afternoon = afternoon.innerText.replace(/\n+$/, "");
+      group.days[DAYS[dayIndex]].morning = compactCellHtml(morning);
+      group.days[DAYS[dayIndex]].afternoon = compactCellHtml(afternoon);
     });
   });
 }
@@ -255,18 +337,29 @@ function paintLessons(el, text) {
   el.innerHTML = formatLessons(text);
 }
 
+function setRichText(el, value, asLessons) {
+  if (looksLikeHtml(value)) {
+    el.innerHTML = sanitizeHtml(value);
+    return;
+  }
+  if (asLessons) paintLessons(el, value);
+  else el.textContent = value || "";
+}
+
+function hasCustomStyle(el) {
+  if ((el.getAttribute("style") || "").trim()) return true;
+  return Boolean(el.querySelector("[style], font[color], font[face]"));
+}
+
 function applyState() {
   groupRows().forEach((row, groupIndex) => {
     const group = state.groups[groupIndex];
-    row.querySelector(".group-name span").textContent = group.name;
+    setRichText(row.querySelector(".group-name span"), group.name, false);
     row.querySelectorAll("td").forEach((cell, dayIndex) => {
       const [morning, afternoon] = cell.querySelectorAll(".lessons");
-      paintLessons(morning, group.days[DAYS[dayIndex]].morning);
-      paintLessons(afternoon, group.days[DAYS[dayIndex]].afternoon);
+      setRichText(morning, group.days[DAYS[dayIndex]].morning, true);
+      setRichText(afternoon, group.days[DAYS[dayIndex]].afternoon, true);
     });
-  });
-  document.querySelectorAll(".lessons").forEach((el) => {
-    paintLessons(el, el.innerText.replace(/\n+$/, ""));
   });
 }
 
@@ -316,21 +409,157 @@ function clearPrintFit() {
   scaleSheetToScreen();
 }
 
+function persistEdits() {
+  readFromDom();
+  saveState();
+  scaleSheetToScreen();
+}
+
+let savedRange = null;
+let activeEditor = null;
+
+function isEditor(node) {
+  if (!node) return null;
+  const el = node.nodeType === Node.ELEMENT_NODE ? node : node.parentElement;
+  return el?.closest('[contenteditable="true"]') || null;
+}
+
+function rememberSelection() {
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return;
+  const editor = isEditor(sel.anchorNode);
+  if (!editor) return;
+  activeEditor = editor;
+  savedRange = sel.getRangeAt(0).cloneRange();
+}
+
+function restoreSelection() {
+  if (!savedRange || !activeEditor) return false;
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(savedRange);
+  return true;
+}
+
+function currentFontSize() {
+  const node = savedRange?.commonAncestorContainer;
+  const el = node
+    ? node.nodeType === Node.ELEMENT_NODE
+      ? node
+      : node.parentElement
+    : activeEditor;
+  return parseFloat(getComputedStyle(el || activeEditor).fontSize) || 9;
+}
+
+function quoteFont(family) {
+  if (!family) return "";
+  return family
+    .split(",")
+    .map((part) => {
+      const name = part.trim();
+      return name.includes(" ") && !/^["'].*["']$/.test(name) ? `"${name}"` : name;
+    })
+    .join(", ");
+}
+
+function paintTree(root, styles) {
+  const apply = (el) => {
+    if (el.tagName === "BR") return;
+    if (styles.color) el.style.color = styles.color;
+    if (Object.prototype.hasOwnProperty.call(styles, "fontFamily")) {
+      if (styles.fontFamily) el.style.fontFamily = styles.fontFamily;
+      else el.style.removeProperty("font-family");
+    }
+    if (styles.fontSize) el.style.fontSize = styles.fontSize;
+  };
+  apply(root);
+  root.querySelectorAll("*").forEach(apply);
+}
+
+function applyStyles(styles, sizeDelta) {
+  if (!activeEditor) return;
+  restoreSelection();
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return;
+  let range = sel.getRangeAt(0);
+  const nextStyles = { ...styles };
+  if (nextStyles.fontFamily) nextStyles.fontFamily = quoteFont(nextStyles.fontFamily);
+  if (sizeDelta) {
+    nextStyles.fontSize = `${Math.min(MAX_FONT_PX, Math.max(MIN_FONT_PX, currentFontSize() + sizeDelta))}px`;
+  }
+
+  if (range.collapsed) {
+    range = document.createRange();
+    range.selectNodeContents(activeEditor);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+
+  const span = document.createElement("span");
+  const contents = range.extractContents();
+  span.appendChild(contents);
+  paintTree(span, nextStyles);
+  range.insertNode(span);
+  const next = document.createRange();
+  next.selectNodeContents(span);
+  sel.removeAllRanges();
+  sel.addRange(next);
+  savedRange = next.cloneRange();
+  persistEdits();
+}
+
+function bindFormatBar() {
+  const bar = document.querySelector(".format-bar");
+  const fontSelect = document.getElementById("font-family");
+  const colorInput = document.getElementById("font-color");
+  if (!bar) return;
+
+  bar.addEventListener("mousedown", (event) => {
+    rememberSelection();
+    if (event.target.closest("select, input[type=color]")) return;
+    event.preventDefault();
+  });
+
+  fontSelect.addEventListener("change", () => {
+    applyStyles({ fontFamily: fontSelect.value || "" });
+  });
+
+  document.getElementById("font-smaller").addEventListener("click", () => applyStyles({}, -1));
+  document.getElementById("font-larger").addEventListener("click", () => applyStyles({}, 1));
+
+  bar.querySelectorAll(".color-swatch").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const color = btn.getAttribute("data-color");
+      colorInput.value = color;
+      applyStyles({ color });
+    });
+  });
+
+  colorInput.addEventListener("input", () => applyStyles({ color: colorInput.value }));
+}
+
 function bind() {
   const sheet = document.querySelector(".sheet");
-  sheet.addEventListener("input", () => {
-    readFromDom();
-    saveState();
-    scaleSheetToScreen();
+  sheet.addEventListener("input", persistEdits);
+
+  sheet.addEventListener("focusin", (event) => {
+    activeEditor = isEditor(event.target);
+    rememberSelection();
   });
+
+  document.addEventListener("selectionchange", rememberSelection);
 
   sheet.addEventListener("focusout", (event) => {
     const el = event.target.closest(".lessons");
     if (!el || el.contains(event.relatedTarget)) return;
-    readFromDom();
-    saveState();
-    paintLessons(el, el.innerText.replace(/\n+$/, ""));
+    persistEdits();
+    if (!hasCustomStyle(el)) {
+      paintLessons(el, el.innerText.replace(/\n+$/, ""));
+      persistEdits();
+    }
   });
+
+  bindFormatBar();
 
   document.getElementById("print-btn").addEventListener("click", () => window.print());
 
@@ -340,8 +569,7 @@ function bind() {
   window.addEventListener("resize", scaleSheetToScreen);
 
   document.getElementById("share-btn").addEventListener("click", async () => {
-    readFromDom();
-    saveState();
+    persistEdits();
     const hint = document.getElementById("share-hint");
     try {
       await navigator.clipboard.writeText(location.href);

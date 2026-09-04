@@ -12,7 +12,7 @@
       href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=10" />
+    <link rel="stylesheet" href="styles.css?v=12" />
   </head>
   <body>
     <div class="toolbar no-print">
@@ -23,6 +23,37 @@
         <button type="button" class="toolbar-btn" id="print-btn">Друкувати</button>
       </div>
       <span id="share-hint" class="toolbar-hint" hidden></span>
+      <div class="format-bar" role="toolbar" aria-label="Формат тексту">
+        <label class="format-field">
+          <span>Шрифт</span>
+          <select id="font-family" title="Шрифт">
+            <option value="">Як у розкладі</option>
+            <option value="Nunito, sans-serif">Nunito</option>
+            <option value="Arial, Helvetica, sans-serif">Arial</option>
+            <option value="Times New Roman, Times, serif">Times New Roman</option>
+            <option value="Georgia, serif">Georgia</option>
+            <option value="Verdana, Geneva, sans-serif">Verdana</option>
+            <option value="Comic Sans MS, Comic Sans, cursive">Comic Sans</option>
+          </select>
+        </label>
+        <div class="format-size">
+          <button type="button" class="format-btn" id="font-smaller" title="Зменшити шрифт" aria-label="Зменшити шрифт">А−</button>
+          <button type="button" class="format-btn" id="font-larger" title="Збільшити шрифт" aria-label="Збільшити шрифт">А+</button>
+        </div>
+        <div class="format-colors" role="group" aria-label="Колір тексту">
+          <button type="button" class="color-swatch" data-color="#1b2a4a" style="background:#1b2a4a" title="Темно-синій" aria-label="Темно-синій"></button>
+          <button type="button" class="color-swatch" data-color="#000000" style="background:#000000" title="Чорний" aria-label="Чорний"></button>
+          <button type="button" class="color-swatch" data-color="#e7423b" style="background:#e7423b" title="Червоний" aria-label="Червоний"></button>
+          <button type="button" class="color-swatch" data-color="#e91e63" style="background:#e91e63" title="Рожевий" aria-label="Рожевий"></button>
+          <button type="button" class="color-swatch" data-color="#1565c0" style="background:#1565c0" title="Синій" aria-label="Синій"></button>
+          <button type="button" class="color-swatch" data-color="#2e7d32" style="background:#2e7d32" title="Зелений" aria-label="Зелений"></button>
+          <button type="button" class="color-swatch" data-color="#ef6c00" style="background:#ef6c00" title="Помаранчевий" aria-label="Помаранчевий"></button>
+          <button type="button" class="color-swatch" data-color="#6a1b9a" style="background:#6a1b9a" title="Фіолетовий" aria-label="Фіолетовий"></button>
+          <label class="color-custom" title="Інший колір">
+            <input type="color" id="font-color" value="#1b2a4a" aria-label="Інший колір" />
+          </label>
+        </div>
+      </div>
     </div>
 
     <div class="stage">
@@ -266,12 +297,12 @@
           </tbody>
         </table>
 
-        <p class="hint no-print">Натисніть на клітинку, щоб вписати заняття. Скопіюйте посилання, щоб відкрити той самий розклад на іншому комп’ютері.</p>
+        <p class="hint no-print">Натисніть на клітинку, щоб вписати заняття. Виділіть текст, щоб змінити шрифт, розмір або колір. Скопіюйте посилання, щоб відкрити той самий розклад на іншому комп’ютері.</p>
         </div>
       </main>
       </div>
     </div>
 
-    <script src="app.js?v=8"></script>
+    <script src="app.js?v=9"></script>
   </body>
 </html>

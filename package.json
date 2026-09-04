@@ -1,0 +1,7 @@
+{
+  "name": "class-schedule",
+  "private": true,
+  "scripts": {
+    "dev": "npx --yes serve -l 5173 --no-clipboard"
+  }
+}
